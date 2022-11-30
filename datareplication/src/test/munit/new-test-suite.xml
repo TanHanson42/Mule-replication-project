@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="new-test-suite.xml" />
+	<munit:test name="Successful-test-suite-datareplication.xapi:200" doc:id="67ffd5d9-d525-4614-8205-9da3beb4a53e" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when CAN Insert" doc:id="5bd9f8fb-3110-4d89-a206-8e8b0882d111" processor="db:bulk-insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert CAN Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when AUS Insert" doc:id="b7b18bea-9384-4358-ad73-3423665c5eeb" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert AUS Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when USA Insert" doc:id="b1dbcdbd-b0d7-4a97-ad50-adce3fe79d1a" processor="db:bulk-insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert USA Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<ee:transform doc:name="Set Initial Volume" doc:id="0104f9b0-f538-4963-9a73-bc53889ae3a3" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+    "case": [
+      {
+        "country": "USA",
+        "userId": "123123",
+        "referenceNumber": 43243,
+        "favoriteAnimal": "Dog",
+       },
+      {
+        "country": "CAN",
+        "userId": "123123",
+        "referenceNumber": 43243,
+        "favoriteAnimal": "Dog",
+       },
+       {
+        "country": "CAN",
+        "userId": "123123",
+        "referenceNumber": 43243,
+        "favoriteAnimal": "Dog",
+       },
+		{
+        "country": "AUS",
+        "userId": "123123",
+        "referenceNumber": 43243,
+        "favoriteAnimal": "Dog",
+       },
+             {
+        "country": "AUS",
+        "userId": "123123",
+        "referenceNumber": 43243,
+        "favoriteAnimal": "Bird",
+       },
+             {
+        "country": "CAN",
+        "userId": "234342",
+        "referenceNumber": 43245,
+        "favoriteAnimal": "Cat",
+       },
+
+    ]
+ 
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to datareplication.xapi" doc:id="a906748e-c2af-41ee-9834-988aa4a883ff" name="datareplication.xapi"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that payload is expected" doc:id="f44c802c-88d3-4c60-a98a-b56a7892647e" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
