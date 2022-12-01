@@ -33,14 +33,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-    "case": [
+  { "case": [
       {
         "country": "USA",
         "userId": "123123",
         "referenceNumber": 43243,
         "favoriteAnimal": "Dog",
        },
-      {
+       {
         "country": "CAN",
         "userId": "123123",
         "referenceNumber": 43243,
@@ -58,20 +58,20 @@ output application/json
         "referenceNumber": 43243,
         "favoriteAnimal": "Dog",
        },
-             {
+        {
         "country": "AUS",
         "userId": "123123",
         "referenceNumber": 43243,
         "favoriteAnimal": "Bird",
        },
-             {
+        {
         "country": "CAN",
         "userId": "234342",
         "referenceNumber": 43245,
         "favoriteAnimal": "Cat",
        },
 
-    ]
+    ]}
  
 ]]></ee:set-payload>
 				</ee:message>
