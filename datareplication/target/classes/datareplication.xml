@@ -187,7 +187,7 @@ vars.finalMessage as Object ++ payload]]></ee:set-variable>
 				</choice>
 				<error-handler>
 					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="bf6d64af-356e-4d65-99c7-21d5cb7c4ef0">
-						<logger level="ERROR" doc:name="Logger" doc:id="ed6247ff-4d70-4945-b28c-62c47d0f6c02" message='#["Error connecting to database"]' />
+						<logger level="INFO" doc:name="Log unsuccessful entries" doc:id="ed6247ff-4d70-4945-b28c-62c47d0f6c02" message='#[payload]' />
 						<ee:transform doc:name="Add unsuccessful inseration" doc:id="08c6888c-4053-448d-8ec8-e52472f913de">
 							<ee:message>
 								<ee:set-payload><![CDATA[%dw 2.0
