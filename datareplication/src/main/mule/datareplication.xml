@@ -37,12 +37,12 @@ payload]]></ee:set-variable>
 		</error-handler>
 	</flow>
 	<flow name="datareplication.sapi" doc:id="9b8ed9b3-8435-4dcf-9e74-b32af91d06da" initialState="started">
-		<ee:transform doc:name="MULTI VARIBLE - Set finalMessage varible and Counter Varible" doc:id="aa5e5e7e-887f-4822-bdd9-f396e63e3788">
+		<ee:transform doc:name="MULTI VARIBLE - Set finalMessage varible and Counter Varible and unsucessful Counter" doc:id="aa5e5e7e-887f-4822-bdd9-f396e63e3788">
 				<ee:message>
 				</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="counter" ><![CDATA[%dw 2.0
-output application/json
+output application/java
 ---
 0]]></ee:set-variable>
 				<ee:set-variable variableName="finalMessage" ><![CDATA[%dw 2.0
@@ -51,116 +51,190 @@ output application/json
 {
 	STATUS: "STATUS OF INSERTIONS BELOW"
 }]]></ee:set-variable>
+				<ee:set-variable variableName="unsuccessfulCounter" ><![CDATA[%dw 2.0
+output application/java
+---
+0]]></ee:set-variable>
 			</ee:variables>
 			</ee:transform>
-		<foreach doc:name="For Each" doc:id="c43482f5-75c2-4dc5-bd53-d932e97d2ab9" collection='#[vars.inputData."case"]'>
-			<choice doc:name="Choice" doc:id="f7ddece0-28c5-4b9a-b641-992a6dd5db42">
-			<when expression='#[vars.inputData."case".country[vars.counter] == "CAN"]'>
-					<db:bulk-insert doc:name="Insert CAN Data" doc:id="3b130d33-a28b-4f86-9a9b-595bd28c170a">
-					<db:bulk-input-parameters><![CDATA[#[{
+		<foreach doc:name="For Each" doc:id="c6d2f8f9-02aa-4758-8953-be8331e4884e" collection='#[vars.inputData."case"]' counterVariableName="forEachCounter">
+				<try doc:name="Try" doc:id="8ab77b85-1d4f-46de-9796-6b86dcada162">
+				<choice doc:name="Choice" doc:id="27af84ff-a2ff-426f-9624-4144bbcab828">
+					<when expression='#[vars.inputData."case".country[vars.counter] == "CAN"]'>
+						<db:bulk-insert doc:name="Insert CAN Data" doc:id="f137fa45-67ed-4b0f-9f4c-d896632969e5">
+								<db:bulk-input-parameters><![CDATA[#[{
 	"case": vars.inputData."case".country,
 	userId: vars.inputData."case".userId,
 	referenceNumber: vars.inputData."case".referenceNumber,
 	favoriteAnimal: vars.inputData."case".favoriteAnimal
 	
 }]]]></db:bulk-input-parameters>
-					<db:sql><![CDATA[INSERT INTO Case(country, userId, referenceNumber favoriteAnimal)
+								<db:sql><![CDATA[INSERT INTO Case(country, userId, referenceNumber favoriteAnimal)
 VALUES (:case, :userId, :referenceNumber :favoriteAnimal)]]></db:sql>
-				</db:bulk-insert>
-					<ee:transform doc:name="Return Success" doc:id="d9a91997-5165-40c8-86ac-3879593edb6c">
-						<ee:message>
-							<ee:set-payload ><![CDATA[%dw 2.0
+							</db:bulk-insert>
+						<ee:transform doc:name="Return Success" doc:id="3abca23e-b63b-4142-bef8-4e4cdb4cb12d">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	STATUS: "CAN Data Entry " ++ vars.counter as String ++ " " ++ "Successfully inserted"
 }]]></ee:set-payload>
-						</ee:message>
-						<ee:variables >
-						</ee:variables>
-					</ee:transform>
-			</when>
-			<when expression='#[vars.inputData."case".country[vars.counter]== "AUS"]'>
-					<db:insert doc:name="Insert AUS Data" doc:id="9e496c1f-a552-4944-9298-cdb8ce8b4a8f">
-					<db:sql><![CDATA[INSERT INTO Case(country, userId, referenceNumber favoriteAnimal)
+							</ee:message>
+							<ee:variables />
+						</ee:transform>
+						<ee:transform doc:name="Concat payloads" doc:id="078b28e4-4293-4b8f-a05f-e0d4ac7e9215">
+							<ee:message />
+							<ee:variables>
+								<ee:set-variable variableName="finalMessage"><![CDATA[%dw 2.0
+output application/json
+---
+vars.finalMessage as Object ++ payload]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</when>
+					<when expression='#[vars.inputData."case".country[vars.counter]== "AUS"]'>
+						<db:insert doc:name="Insert AUS Data" doc:id="7f7fdfdd-faa6-46fb-ab38-9f9771144a98">
+							<db:sql><![CDATA[INSERT INTO Case(country, userId, referenceNumber favoriteAnimal)
 VALUES (:case, :userId, :referenceNumber :favoriteAnimal)]]></db:sql>
-					<db:input-parameters><![CDATA[#[{
+							<db:input-parameters><![CDATA[#[{
 	"case": vars.inputData."case".country,
 	userId: vars.inputData."case".userId,
 	referenceNumber: vars.inputData."case".referenceNumber,
 	favoriteAnimal: vars.inputData."case".favoriteAnimal
 	
 }]]]></db:input-parameters>
-				</db:insert>
-					<ee:transform doc:name="Return Success" doc:id="a6700d91-4c5c-4e74-a869-dc0856f2a5da">
-						<ee:message>
-							<ee:set-payload ><![CDATA[%dw 2.0
+						</db:insert>
+						<ee:transform doc:name="Return Success" doc:id="e5100ff8-7fd0-46b0-bb05-c3cd65dab323">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	STATUS: "AUS Data Entry " ++ vars.counter as String ++ " " ++ "Successfully inserted"
 }]]></ee:set-payload>
-						</ee:message>
-						<ee:variables >
-						</ee:variables>
-					</ee:transform>
-			</when>
-			<when expression='#[vars.inputData."case".country[vars.counter] == "USA"]'>
-					<db:bulk-insert doc:name="Insert USA Data" doc:id="d962ab18-bc62-4889-9b21-5c9e2975f9df">
-					<db:bulk-input-parameters><![CDATA[#[{
+							</ee:message>
+							<ee:variables />
+						</ee:transform>
+						<ee:transform doc:name="Concat payloads" doc:id="56b28b5a-829a-44c2-a899-60368ae7e9a9">
+							<ee:message />
+							<ee:variables>
+								<ee:set-variable variableName="finalMessage"><![CDATA[%dw 2.0
+output application/json
+---
+vars.finalMessage as Object ++ payload]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</when>
+					<when expression='#[vars.inputData."case".country[vars.counter] == "USA"]' >
+						
+						
+						
+						<db:bulk-insert doc:name="Insert USA Data" doc:id="031978f3-0ad5-4d84-98b9-81add037d45d">
+							<db:bulk-input-parameters><![CDATA[#[{
 	"case": vars.inputData."case".country,
 	userId: vars.inputData."case".userId,
 	referenceNumber: vars.inputData."case".referenceNumber,
 	favoriteAnimal: vars.inputData."case".favoriteAnimal
 	
 }]]]></db:bulk-input-parameters>
-					<db:sql><![CDATA[INSERT INTO Case(country, userId, referenceNumber favoriteAnimal)
+							<db:sql><![CDATA[INSERT INTO Case(country, userId, referenceNumber favoriteAnimal)
 VALUES (:case, :userId, :referenceNumber :favoriteAnimal)]]></db:sql>
-				</db:bulk-insert>
-					<ee:transform doc:name="Return Success" doc:id="8c61926f-4f15-44db-b057-6e592db40746">
-			<ee:message>
-							<ee:set-payload ><![CDATA[%dw 2.0
+						</db:bulk-insert>
+						<ee:transform doc:name="Return Success" doc:id="9fe6725a-b495-43f8-8256-e1b0f568fcae">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	STATUS: "USA Data Entry " ++ vars.counter as String ++ " " ++ "Successfully inserted"
 }]]></ee:set-payload>
-			</ee:message>
-						<ee:variables >
-						</ee:variables>
-		</ee:transform>
-			</when>
-				<otherwise>
-					<ee:transform doc:name="Add unsuccessful inseration" doc:id="e379e031-44b0-42a9-9156-bd1c3ad18c70" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
+							</ee:message>
+							<ee:variables />
+						</ee:transform>
+						<ee:transform doc:name="Concat payloads" doc:id="ae83378c-744e-4ca1-8752-f95e28831d1e">
+							<ee:message />
+							<ee:variables>
+								<ee:set-variable variableName="finalMessage"><![CDATA[%dw 2.0
+output application/json
+---
+vars.finalMessage as Object ++ payload]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</when>
+					<otherwise>
+						<ee:transform doc:name="Add unsuccessful inseration" doc:id="c4f10c46-f497-4d91-aa0d-f1778b9378a8" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
     STATUS:	"Unsuccessfully Inserted Entry " ++ vars.counter
 }]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-			</otherwise>
-		</choice>
-			<ee:transform doc:name="Concat payloads" doc:id="d939aaa6-b5d2-4ecb-b228-259988c96b6d">
-				<ee:message>
-				</ee:message>
-				<ee:variables>
-					<ee:set-variable variableName="finalMessage"><![CDATA[%dw 2.0
+							</ee:message>
+						</ee:transform>
+						<set-variable value="#[vars.unsuccessfulCounter + 1]" doc:name="Increment unsuccessfulCounter" doc:id="e36de03f-2f7c-44c1-8933-b26f5b372ca5" variableName="unsuccessfulCounter" />
+						<ee:transform doc:name="Concat payloads" doc:id="0e36293d-9c64-4ac2-a9f9-3f491fed96a6" >
+							<ee:message />
+							<ee:variables >
+								<ee:set-variable variableName="finalMessage" ><![CDATA[%dw 2.0
 output application/json
 ---
 vars.finalMessage as Object ++ payload]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-			<set-variable value="#[vars.counter + 1]" doc:name="Increment Counter varible" doc:id="06434678-afc7-471e-b424-61b820043b6c" variableName="counter" />
-		</foreach>
+							</ee:variables>
+						</ee:transform>
+					</otherwise>
+				</choice>
+				<error-handler>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="bf6d64af-356e-4d65-99c7-21d5cb7c4ef0">
+						<logger level="ERROR" doc:name="Logger" doc:id="ed6247ff-4d70-4945-b28c-62c47d0f6c02" message='#["Error connecting to database"]' />
+						<ee:transform doc:name="Add unsuccessful inseration" doc:id="08c6888c-4053-448d-8ec8-e52472f913de">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    STATUS:	"Unsuccessfully Inserted Entry " ++ vars.counter
+}]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<set-variable value="#[vars.unsuccessfulCounter + 1]" doc:name="Increment unsuccessfulCounter" doc:id="1dce6078-07cc-4658-873e-017830ac28f2" variableName="unsuccessfulCounter" />
+						<ee:transform doc:name="Concat payloads" doc:id="ed9be086-ed40-4187-aef8-d9077b89fea2" >
+							<ee:message />
+							<ee:variables >
+								<ee:set-variable variableName="finalMessage" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.finalMessage as Object ++ payload]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</on-error-continue>
+				</error-handler>
+			</try>
+				<ee:transform doc:name="Set numberOfUncuccessFulEntries" doc:id="a521f54c-faf1-4735-b022-71027dbfde40">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="numberOfUnsuccessfulEntries"><![CDATA[%dw 2.0
+output application/json
+---
+if(vars.unsuccessfulCounter == 0)
+	{
+    STATUS:	"No Unsuccessful Entries"
+	}
+else
+	{
+	    STATUS:	"Unsuccessfully Inserted " ++ vars.unsuccessfulCounter ++  " " ++ "Entries"
+	}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<set-variable value="#[vars.counter + 1]" doc:name="Increment Counter varible" doc:id="ba550bda-1cec-47f1-8886-b477a77d133c" variableName="counter" />
+			</foreach>
 		<ee:transform doc:name="Return final payload" doc:id="522b59d8-1868-4168-82c3-2ad66fbee32d" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-vars.finalMessage
+vars.finalMessage ++ vars.numberOfUnsuccessfulEntries
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
