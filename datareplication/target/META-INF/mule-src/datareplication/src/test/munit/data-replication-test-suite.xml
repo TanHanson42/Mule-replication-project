@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="new-test-suite.xml" />
+	<munit:test name="Successful-test-suite-datareplication.xapi:200" doc:id="67ffd5d9-d525-4614-8205-9da3beb4a53e" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when CAN Insert" doc:id="5bd9f8fb-3110-4d89-a206-8e8b0882d111" processor="db:bulk-insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert CAN Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when AUS Insert" doc:id="b7b18bea-9384-4358-ad73-3423665c5eeb" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert AUS Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when USA Insert" doc:id="b1dbcdbd-b0d7-4a97-ad50-adce3fe79d1a" processor="db:bulk-insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert USA Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<ee:transform doc:name="Set Initial Volume" doc:id="0104f9b0-f538-4963-9a73-bc53889ae3a3" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+  { "case": [
+  {
+    "userId": 63,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "5b5d87be-b954-4d71-89d0-fbf67192fad8"
+  },
+  {
+    "userId": 35,
+    "country": "USA",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "cc32a328-d973-48fe-9fe0-b509fdf1873d"
+  },
+  {
+    "userId": 94,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "04d33b5a-270b-4169-bdae-a3b0a3f49505"
+  },
+  {
+    "userId": 47,
+    "country": "USA",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "872d0e82-507b-4a08-8688-fe551c9b5bc3"
+  },
+  {
+    "userId": 12,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "8417180f-21b4-46f8-ac9d-2b3f602cec56"
+  },
+  {
+    "userId": 57,
+    "country": "AUS",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "34a239f3-71c4-4fa2-9942-6f3b4fe90fc2"
+  },
+  {
+    "userId": 64,
+    "country": "CAN",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "231e52b1-7b1f-4ef5-bbbc-834299646a3f"
+  },
+  {
+    "userId": 97,
+    "country": "AUS",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "56dd9639-facf-41ed-a715-1cf47c7b080a"
+  },
+  {
+    "userId": 96,
+    "country": "USA",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "1d66d0f9-4246-4b94-a1a9-844d807a89b8"
+  },
+  {
+    "userId": 6,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "e14f9f98-dbbd-493b-abd5-135066426fc4"
+  },
+  {
+    "userId": 44,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "2643837f-36ce-4b5a-b230-09bae48d3ba4"
+  },
+  {
+    "userId": 42,
+    "country": "AUS",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "ef9a43df-588e-4290-ab1b-5e3e04b942b3"
+  },
+  {
+    "userId": 13,
+    "country": "CAN",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "6dfe61c5-cff7-462c-a3c2-b697f62aa497"
+  },
+  {
+    "userId": 71,
+    "country": "USA",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "7bf84210-c834-4fbb-a99a-54c772fb57c1"
+  },
+  {
+    "userId": 94,
+    "country": "USA",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "ce80dd7d-50a7-4dfa-9b00-fa17f1472ccb"
+  },
+  {
+    "userId": 74,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "6876126d-e426-4152-9890-039d9adba212"
+  },
+  {
+    "userId": 100,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "2af9ed2b-4383-4952-9ca3-19bf99022697"
+  },
+  {
+    "userId": 10,
+    "country": "AUS",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "ba0f55b6-0279-4735-a325-9c1a963f04bd"
+  },
+  {
+    "userId": 79,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "881772a9-58db-4d19-aa18-94ee3cc8d534"
+  },
+  {
+    "userId": 62,
+    "country": "USA",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "2b03e4fb-76da-4783-be50-d39fd99ee604"
+  },
+ 
+]}
+ 
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to datareplication.xapi" doc:id="a906748e-c2af-41ee-9834-988aa4a883ff" name="datareplication.xapi"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that end payload is expected" doc:id="f44c802c-88d3-4c60-a98a-b56a7892647e" expression="#[payload]" is='#[MunitTools::equalTo({&#10;  "STATUS": "STATUS OF INSERTIONS BELOW",&#10;  "STATUS": "CAN Data Entry 0 Successfully inserted",&#10;  "STATUS": "USA Data Entry 1 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 2 Successfully inserted",&#10;  "STATUS": "USA Data Entry 3 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 4 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 5 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 6 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 7 Successfully inserted",&#10;  "STATUS": "USA Data Entry 8 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 9 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 10 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 11 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 12 Successfully inserted",&#10;  "STATUS": "USA Data Entry 13 Successfully inserted",&#10;  "STATUS": "USA Data Entry 14 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 15 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 16 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 17 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 18 Successfully inserted",&#10;  "STATUS": "USA Data Entry 19 Successfully inserted",&#10;  "STATUS": "No Unsuccessful Entries"&#10;})]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Unsuccessful-entries-test-suite-datareplication.xapi:200" doc:id="546a93ee-fcbf-4f0f-970a-0d1f7cea7772" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when CAN Insert" doc:id="7f4cd9ea-6eaa-481f-b81d-9a7da92cb59c" processor="db:bulk-insert" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert CAN Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when AUS Insert" doc:id="67938007-d003-4022-8573-a2b265d927ea" processor="db:insert" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert AUS Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when USA Insert" doc:id="1a596825-10d5-4d7a-ae50-e0fe2e403723" processor="db:bulk-insert" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert USA Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<ee:transform doc:name="Set Initial Volume" doc:id="baccb972-459b-4373-b252-1fa86a6318fd" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+  { "case": [
+  {
+    "userId": 63,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "5b5d87be-b954-4d71-89d0-fbf67192fad8"
+  },
+  {
+    "userId": 35,
+    "country": "MEX",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "cc32a328-d973-48fe-9fe0-b509fdf1873d"
+  },
+  {
+    "userId": 94,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "04d33b5a-270b-4169-bdae-a3b0a3f49505"
+  },
+  {
+    "userId": 47,
+    "country": "GER",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "872d0e82-507b-4a08-8688-fe551c9b5bc3"
+  },
+  {
+    "userId": 12,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "8417180f-21b4-46f8-ac9d-2b3f602cec56"
+  },
+  {
+    "userId": 57,
+    "country": "ENG",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "34a239f3-71c4-4fa2-9942-6f3b4fe90fc2"
+  },
+  {
+    "userId": 64,
+    "country": "CAN",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "231e52b1-7b1f-4ef5-bbbc-834299646a3f"
+  },
+  {
+    "userId": 97,
+    "country": "AUS",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "56dd9639-facf-41ed-a715-1cf47c7b080a"
+  },
+  {
+    "userId": 96,
+    "country": "USA",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "1d66d0f9-4246-4b94-a1a9-844d807a89b8"
+  },
+  {
+    "userId": 6,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "e14f9f98-dbbd-493b-abd5-135066426fc4"
+  },
+  {
+    "userId": 44,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "2643837f-36ce-4b5a-b230-09bae48d3ba4"
+  },
+  {
+    "userId": 42,
+    "country": "AUS",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "ef9a43df-588e-4290-ab1b-5e3e04b942b3"
+  },
+  {
+    "userId": 13,
+    "country": "CAN",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "6dfe61c5-cff7-462c-a3c2-b697f62aa497"
+  },
+  {
+    "userId": 71,
+    "country": "USA",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "7bf84210-c834-4fbb-a99a-54c772fb57c1"
+  },
+  {
+    "userId": 94,
+    "country": "USA",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "ce80dd7d-50a7-4dfa-9b00-fa17f1472ccb"
+  },
+  {
+    "userId": 74,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "6876126d-e426-4152-9890-039d9adba212"
+  },
+  {
+    "userId": 100,
+    "country": "AUS",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "2af9ed2b-4383-4952-9ca3-19bf99022697"
+  },
+  {
+    "userId": 10,
+    "country": "AUS",
+    "favoriteAnimal": "Bird",
+    "referenceNumber": "ba0f55b6-0279-4735-a325-9c1a963f04bd"
+  },
+  {
+    "userId": 79,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "881772a9-58db-4d19-aa18-94ee3cc8d534"
+  },
+  {
+    "userId": 62,
+    "country": "USA",
+    "favoriteAnimal": "Dog",
+    "referenceNumber": "2b03e4fb-76da-4783-be50-d39fd99ee604"
+  },
+ 
+]}
+ 
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to datareplication.xapi" doc:id="3c6ddb1b-9413-4218-9844-b1e679d79a11" name="datareplication.xapi" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that end payload is expected" doc:id="792847c8-ad2e-4bb7-99ff-ba6c45894718" expression="#[payload]" is='#[MunitTools::equalTo({&#10;  "STATUS": "STATUS OF INSERTIONS BELOW",&#10;  "STATUS": "CAN Data Entry 0 Successfully inserted",&#10;  "STATUS": "Unsuccessfully Inserted Entry 1",&#10;  "STATUS": "AUS Data Entry 2 Successfully inserted",&#10;  "STATUS": "Unsuccessfully Inserted Entry 3",&#10;  "STATUS": "AUS Data Entry 4 Successfully inserted",&#10;  "STATUS": "Unsuccessfully Inserted Entry 5",&#10;  "STATUS": "CAN Data Entry 6 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 7 Successfully inserted",&#10;  "STATUS": "USA Data Entry 8 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 9 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 10 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 11 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 12 Successfully inserted",&#10;  "STATUS": "USA Data Entry 13 Successfully inserted",&#10;  "STATUS": "USA Data Entry 14 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 15 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 16 Successfully inserted",&#10;  "STATUS": "AUS Data Entry 17 Successfully inserted",&#10;  "STATUS": "CAN Data Entry 18 Successfully inserted",&#10;  "STATUS": "USA Data Entry 19 Successfully inserted",&#10;  "STATUS": "Unsuccessfully Inserted 3 Entries"&#10;})]' />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="error-datareplication.xapi:HTTP:CONNECTIVITY" doc:id="5eb4d4ed-e0ee-42d8-b938-f22f986ab0a5" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when CAN Insert" doc:id="b23a1bb0-c455-42b1-a059-81572a2387d1" processor="db:bulk-insert" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert CAN Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when AUS Insert" doc:id="1f289860-02f0-42eb-84fb-1ff2bc43de41" processor="db:insert" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert AUS Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when USA Insert" doc:id="0a9a8303-ef7a-41bb-a1b5-ca91666ac00c" processor="db:bulk-insert" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Insert USA Data" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<ee:transform doc:name="Set Initial Volume" doc:id="aa0eb214-56ad-4b7c-b00c-14c4b975223b" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+  { "case": [
+  {
+    "userId": 63,
+    "country": "CAN",
+    "favoriteAnimal": "Cat",
+    "referenceNumber": "5b5d87be-b954-4d71-89d0-fbf67192fad8"
+  },
+]}
+ 
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to datareplication.xapi" doc:id="9be3e7a3-d16a-4373-9f1c-47210cf12deb" name="datareplication.xapi" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that end payload is expected" doc:id="e00493e9-a58e-4a51-bac4-c544d70d25d0" expression="#[payload]" is='#[MunitTools::equalTo({&#10;  "STATUS": "STATUS OF INSERTIONS BELOW",&#10;  "STATUS": "Unsuccessfully Inserted Entry 0",&#10;  "STATUS": "Unsuccessfully Inserted 1 Entries"&#10;})]' />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

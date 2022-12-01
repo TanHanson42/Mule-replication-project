@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 				<fixed-frequency frequency="1" timeUnit="DAYS"/>
 			</scheduling-strategy>
 		</scheduler>
-		<ee:transform doc:name="inputData" doc:id="b87f5bf9-9abb-49e1-aa9c-90b1d07ec05d" >
+		<ee:transform doc:name="Set input_data" doc:id="b87f5bf9-9abb-49e1-aa9c-90b1d07ec05d" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
